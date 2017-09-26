@@ -19,23 +19,25 @@ bot.member_leave do |event|
 end
 
 bot.message do |event|
-  event.respond(message_engine(event.content)) if event.content.include? '-'
+  event.respond(message_engine(event.content)) if event.content.include? '~'
 end
 
 def message_engine(message)
   case message
-  when '-fortune'
+  when '~fortune'
     '``' + `fortune -s | cowsay` + '``'
-  when '-catpic'
+  when '~catpic'
     RestClient.get('http://thecatapi.com/api/images/get?format=src&type=jpg').request.url
-  when '-catgif'
+  when '~catgif'
     RestClient.get('http://thecatapi.com/api/images/get?format=src&type=gif').request.url
-  when '-chucknorris'
+  when '~chucknorris'
     JSON.parse(RestClient.get('http://api.icndb.com/jokes/random?exclude=[explicit]'))['value']['joke']
-  when '-ghostbusters'
+  when '~ghostbusters'
     '``' + `cowsay -f ghostbusters Who you Gonna Call` + '``'
-  when '-moo'
+  when '~moo'
     '``' + `apt-get moo` + '``'
+  else
+    "I don't know that command. 😞"
   end
 end
 
