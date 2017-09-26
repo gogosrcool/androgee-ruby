@@ -11,9 +11,11 @@ bot.ready do
 end
 
 bot.member_join do |event|
+  event.server.default_channel.send_message event.user.display_name + ' has joined! :metal:'
 end
 
 bot.member_leave do |event|
+  event.server.channels_by_id[ENV['DEBUG_CHANNEL']].send_message event.user.display_name + ' just left the server!'
 end
 
 bot.message do |event|
