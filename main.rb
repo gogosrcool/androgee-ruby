@@ -19,7 +19,7 @@ bot.member_leave do |event|
 end
 
 bot.message do |event|
-  event.respond(message_engine(event.content)) if event.content.include? '~'
+  event.respond(message_engine(event.content)) if event.content[0] == '~'
 end
 
 def message_engine(message)
