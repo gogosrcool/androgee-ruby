@@ -25,7 +25,7 @@ def message_engine(message)
   when '-ping'
     'pong'
   when '-fortune'
-    'Not Implemented'
+    '``' + `fortune -s | cowsay` + '``'
   when '-catpic'
     RestClient.get('http://thecatapi.com/api/images/get?format=src&type=jpg').request.url
   when '-catgif'
@@ -37,7 +37,9 @@ def message_engine(message)
   when '-commands'
     'Not Implemented'
   when '-ghostbusters'
-    'Not Implemented'
+    '``' + `cowsay -f ghostbusters Who you Gonna Call` + '``'
+  when '-moo'
+    '``' + `apt-get moo` + '``'
   else
     'Nothing matched, still Not Implemented'
   end
