@@ -17,9 +17,7 @@ bot.member_leave do |event|
 end
 
 bot.message do |event|
-  if event.content.include? '-'
-    event.respond(message_engine(event.content))
-  end
+  event.respond(message_engine(event.content)) if event.content.include? '-'
 end
 
 def message_engine(message)
