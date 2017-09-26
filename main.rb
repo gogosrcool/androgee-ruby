@@ -24,8 +24,6 @@ end
 
 def message_engine(message)
   case message
-  when '-ping'
-    'pong'
   when '-fortune'
     '``' + `fortune -s | cowsay` + '``'
   when '-catpic'
@@ -34,16 +32,10 @@ def message_engine(message)
     RestClient.get('http://thecatapi.com/api/images/get?format=src&type=gif').request.url
   when '-chucknorris'
     JSON.parse(RestClient.get('http://api.icndb.com/jokes/random?exclude=[explicit]'))['value']['joke']
-  when '-help'
-    'Not Implemented'
-  when '-commands'
-    'Not Implemented'
   when '-ghostbusters'
     '``' + `cowsay -f ghostbusters Who you Gonna Call` + '``'
   when '-moo'
     '``' + `apt-get moo` + '``'
-  else
-    'Nothing matched, still Not Implemented'
   end
 end
 
