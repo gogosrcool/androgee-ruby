@@ -1,6 +1,7 @@
 require 'rest-client'
 require 'discordrb'
 require 'json'
+require 'rcon'
 
 file = File.read('blob.json')
 json = JSON.parse(file)
@@ -37,7 +38,24 @@ def message_engine(message)
   when '~moo'
     '``' + `apt-get moo` + '``'
   else
-    "I don't know that command. 😞"
+    if message.include?('~minecraft time')
+      minecraft_command(message)
+    else
+      "I don't know that command. 😞"
+    end
+  end
+end
+
+def minecraft_command(message)
+  rcon = RCon::Query::Minecraft.new(ENV['MINECRAFT_IP'], ENV['MINECRAFT_PORT'])
+  rcon.auth(ENV['MINECRAFT_PASSWORD'])
+  rcon.command('time set 0') if message.include?('day')
+  rcon.command('time set 12000') if message.include?('night')
+  rcon.disconnect
+  if rcon.authed == false
+    'Minecraft server time changed :ok_hand:'
+  else
+    'Something got jacked up while setting the time in Minecraft :thumbsdown:'
   end
 end
 
