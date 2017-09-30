@@ -1,8 +1,10 @@
 require 'rest-client'
 require 'discordrb'
+require 'timers'
 require 'json'
 require 'rcon'
 
+timers = Timers::Group.new
 file = File.read('blob.json')
 json = JSON.parse(file)
 bot = Discordrb::Bot.new token: ENV['RBBY']
@@ -58,5 +60,8 @@ def minecraft_command(message)
     'Something got jacked up while setting the time in Minecraft :thumbsdown:'
   end
 end
+
+# now_and_every_five_seconds = timers.now_and_every(60) { puts "Just pinged Minecraft server" }
+# Thread.new { loop { timers.wait } }
 
 bot.run
