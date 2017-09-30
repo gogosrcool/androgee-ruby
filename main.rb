@@ -16,7 +16,7 @@ bot.member_join do |event|
 end
 
 bot.member_leave do |event|
-  event.server.channels_by_id[ENV['DEBUG_CHANNEL']].send_message event.user.display_name + ' just left the server!'
+  event.server.text_channels.select { |channel| channel.name == 'debug' }.first.send_message event.user.username + ' just left the server!'
 end
 
 bot.message do |event|
