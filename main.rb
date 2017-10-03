@@ -1,16 +1,23 @@
 require 'rest-client'
 require 'discordrb'
 require 'timers'
+require 'redis'
 require 'json'
 require 'rcon'
 
-timers = Timers::Group.new
 file = File.read('blob.json')
 json = JSON.parse(file)
 bot = Discordrb::Bot.new token: ENV['RBBY']
+redis = Redis.new
 
 bot.ready do
   bot.game = json['games'].sample
+end
+
+redis.subscribe('MinecraftUsers') do |on|
+  on.message do |channel, message|
+    puts message
+  end
 end
 
 bot.member_join do |event|
@@ -47,21 +54,5 @@ def message_engine(message)
     end
   end
 end
-
-def minecraft_command(message)
-  rcon = RCon::Query::Minecraft.new(ENV['MINECRAFT_IP'], ENV['MINECRAFT_PORT'])
-  rcon.auth(ENV['MINECRAFT_PASSWORD'])
-  rcon.command('time set 0') if message.include?('day')
-  rcon.command('time set 12000') if message.include?('night')
-  rcon.disconnect
-  if rcon.authed == false
-    'Minecraft server time changed :ok_hand:'
-  else
-    'Something got jacked up while setting the time in Minecraft :thumbsdown:'
-  end
-end
-
-# now_and_every_five_seconds = timers.now_and_every(60) { puts "Just pinged Minecraft server" }
-# Thread.new { loop { timers.wait } }
 
 bot.run
