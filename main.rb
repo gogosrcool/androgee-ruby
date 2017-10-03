@@ -10,18 +10,20 @@ json = JSON.parse(file)
 bot = Discordrb::Bot.new token: ENV['RBBY']
 redis = Redis.new
 
+Thread.new do
+  redis.subscribe('MinecraftUsers') do |on|
+    on.message do |channel, message|
+      puts message
+    end
+  end
+end
+
 bot.ready do
   bot.game = json['games'].sample
 end
 
-redis.subscribe('MinecraftUsers') do |on|
-  on.message do |channel, message|
-    puts message
-  end
-end
-
 bot.member_join do |event|
-  event.server.default_channel.send_message event.user.display_name + ' has joined! :metal:'
+  event.server.default_channel.send_message event.user.display_name + ' has joined! :wave:'
 end
 
 bot.member_leave do |event|
@@ -29,7 +31,7 @@ bot.member_leave do |event|
 end
 
 bot.message do |event|
-  event.respond(message_engine(event.content)) if event.content[0] == '~'
+  event.respond(message_engine(event.content)) if event.content[0] == '~' && event.content[1] != '~'
 end
 
 def message_engine(message)
