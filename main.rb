@@ -11,9 +11,10 @@ bot = Discordrb::Bot.new token: ENV['RBBY']
 redis = Redis.new
 
 Thread.new do
-  redis.subscribe('MinecraftUsers') do |on|
+  redis.subscribe('newMinecraftPlayers') do |on|
     on.message do |channel, message|
       puts message
+      bot.servers[183740337976508416].text_channels.select { |channel| channel.name == 'modded-minecraft-server' }.first.send_message(message)
     end
   end
 end
