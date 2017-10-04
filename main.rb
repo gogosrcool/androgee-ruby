@@ -8,9 +8,19 @@ require 'rcon'
 file = File.read('blob.json')
 json = JSON.parse(file)
 bot = Discordrb::Bot.new token: ENV['RBBY']
-redis = Redis.new
 
 Thread.new do
+  redis = Redis.new
+  redis.subscribe('RustPlayers') do |on|
+    on.message do |channel, message|
+      puts message
+      bot.servers[183740337976508416].text_channels.select { |channel| channel.name == 'rust-server' }.first.send_message(message)
+    end
+  end
+end
+
+Thread.new do
+  redis = Redis.new
   redis.subscribe('newMinecraftPlayers') do |on|
     on.message do |channel, message|
       puts message
