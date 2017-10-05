@@ -1,9 +1,7 @@
 require 'rest-client'
 require 'discordrb'
-require 'timers'
 require 'redis'
 require 'json'
-require 'rcon'
 
 file = File.read('blob.json')
 json = JSON.parse(file)
