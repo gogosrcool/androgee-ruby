@@ -8,7 +8,7 @@ json = JSON.parse(file)
 bot = Discordrb::Bot.new token: ENV['RBBY']
 
 Thread.new do
-  redis = Redis.new
+  redis = Redis.new({host: 'redis'})
   redis.subscribe('RustPlayers') do |on|
     on.message do |channel, message|
       puts message
@@ -18,7 +18,7 @@ Thread.new do
 end
 
 Thread.new do
-  redis = Redis.new
+  redis = Redis.new({host: 'redis'})
   redis.subscribe('newMinecraftPlayers') do |on|
     on.message do |channel, message|
       puts message
