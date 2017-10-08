@@ -1,8 +1,8 @@
 version: "2"
 services:
   redis:
-    image: "redis:alpine"
-  androgee:
-    build: .
+    image: "redis:latest"
+  androgee-wrcon:
+    build: wrcon:latest
   androgee-discord:
-    image: "buttface:latest"
+    image: "discord:latest"
