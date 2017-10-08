@@ -3,6 +3,6 @@ services:
   redis:
     image: "redis:latest"
   androgee-wrcon:
-    build: wrcon:latest
+    image: wrcon:latest
   androgee-discord:
     image: "discord:latest"
