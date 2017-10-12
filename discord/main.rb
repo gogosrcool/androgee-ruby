@@ -7,26 +7,6 @@ file = File.read('blob.json')
 json = JSON.parse(file)
 bot = Discordrb::Bot.new token: ENV['RBBY']
 
-Thread.new do
-  redis = Redis.new({host: 'redis'})
-  redis.subscribe('RustPlayers') do |on|
-    on.message do |channel, message|
-      puts message
-      bot.servers[183740337976508416].text_channels.select { |channel| channel.name == 'rust-server' }.first.send_message(message)
-    end
-  end
-end
-
-Thread.new do
-  redis = Redis.new({host: 'redis'})
-  redis.subscribe('newMinecraftPlayers') do |on|
-    on.message do |channel, message|
-      puts message
-      bot.servers[183740337976508416].text_channels.select { |channel| channel.name == 'modded-minecraft-server' }.first.send_message(message)
-    end
-  end
-end
-
 bot.ready do
   bot.game = json['games'].sample
 end
@@ -60,8 +40,38 @@ def message_engine(message)
   else
     if message.include?('~minecraft time')
       minecraft_command(message)
+    elsif message.include?('~rust time')
+      redis2 = Redis.new(host: 'localhost')
+      redis2.publish('RustCommands', message)
+      'Done'
     else
       "I don't know that command. 😞"
+    end
+  end
+end
+
+Thread.new do
+  redis = Redis.new(host: 'localhost')
+  redis.subscribe('RustPlayers') do |on|
+    puts 'subscribed to RustPlayers'
+    on.message do |_channel, message|
+      puts message
+      bot.servers[ENV['EGEEIO_SERVER']].text_channels.select do |channel|
+        channel.name == 'rust-server'
+      end.first.send_message(message)
+    end
+  end
+end
+
+Thread.new do
+  redis = Redis.new(host: 'localhost')
+  redis.subscribe('newMinecraftPlayers') do |on|
+    puts 'subscribed to newMinecraftPlayers'
+    on.message do |_channel, message|
+      puts message
+      bot.servers[ENV['EGEEIO_SERVER']].text_channels.select do |channel|
+        channel.name == 'modded-minecraft-server'
+      end.first.send_message(message)
     end
   end
 end
