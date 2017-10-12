@@ -5,7 +5,7 @@ require 'json'
 
 file = File.read('blob.json')
 json = JSON.parse(file)
-bot = Discordrb::Bot.new token: ENV['RBBY']
+bot = Discordrb::Commands::CommandBot.new token: ENV['RBBY'], prefix: '~'
 
 bot.ready do
   bot.game = json['games'].sample
@@ -19,24 +19,32 @@ bot.member_leave do |event|
   event.server.text_channels.select { |channel| channel.name == 'debug' }.first.send_message event.user.username + ' just left the server!'
 end
 
-bot.message do |event|
-  event.respond(message_engine(event.content)) if event.content[0] == '~' && event.content[1] != '~'
+bot.command :fortune do
+  '``' + `fortune -s | cowsay` + '``'
 end
 
+bot.command :catpic do
+  RestClient.get('http://thecatapi.com/api/images/get?format=src&type=jpg').request.url
+end
+
+bot.command :catgif do
+  RestClient.get('http://thecatapi.com/api/images/get?format=src&type=gif').request.url
+end
+
+bot.command :chucknorris do
+  JSON.parse(RestClient.get('http://api.icndb.com/jokes/random?exclude=[explicit]'))['value']['joke']
+end
+
+bot.command :ghostbusters do
+  '``' + `cowsay -f ghostbusters Who you Gonna Call` + '``'
+end
+
+bot.command :moo do
+  '``' + `apt-get moo` + '``'
+end
+
+# TODO: Refactor this shit
 def message_engine(message)
-  case message
-  when '~fortune'
-    '``' + `fortune -s | cowsay` + '``'
-  when '~catpic'
-    RestClient.get('http://thecatapi.com/api/images/get?format=src&type=jpg').request.url
-  when '~catgif'
-    RestClient.get('http://thecatapi.com/api/images/get?format=src&type=gif').request.url
-  when '~chucknorris'
-    JSON.parse(RestClient.get('http://api.icndb.com/jokes/random?exclude=[explicit]'))['value']['joke']
-  when '~ghostbusters'
-    '``' + `cowsay -f ghostbusters Who you Gonna Call` + '``'
-  when '~moo'
-    '``' + `apt-get moo` + '``'
   else
     if message.include?('~minecraft time')
       minecraft_command(message)
@@ -48,7 +56,6 @@ def message_engine(message)
       "I don't know that command. 😞"
     end
   end
-end
 
 Thread.new do
   redis = Redis.new(host: 'localhost')
