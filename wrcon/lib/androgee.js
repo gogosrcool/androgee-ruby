@@ -7,7 +7,7 @@ class Androgee {
     // Establish a connection to Redis and setup error handling
     this.redis = Redis.createClient({host: 'redis'})
 
-    client.on("error", function (err) {
+    this.redis.on("error", function (err) {
       console.log("Error " + err);
     })
 
