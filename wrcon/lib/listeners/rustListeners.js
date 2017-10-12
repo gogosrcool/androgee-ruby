@@ -13,7 +13,7 @@ class RustListeners {
     rustConnection.on('message', function (msg) {
       try {
         if (msg.message.includes('joined [')) {
-          const redis = Redis.createClient({host: 'redis'})
+          const redis = Redis.createClient({host: 'localhost'})
           const playerName = msg.message.match(/([^/]*)\s*\s/)
           const playerNameNormalized = playerName.pop().trim()
           const discordAnnoucement = playerNameNormalized.replace('joined', 'logged in to')
@@ -59,17 +59,17 @@ class RustListeners {
     }
   }
   setTime (message) {
-    const msg = message.author.username + ' just set the time to '
-    if (message.content.includes('day')) {
-      const msgDay = msg + 'day'
+    // const msg = message.author.username + ' just set the time to '
+    if (message.includes('day')) {
+      // const msgDay = msg + 'day'
       this.wRcon.run('env.time 9')
-      this.wRcon.run('say ' + msgDay + ' from the Discord server')
-      message.reply('setting time to day...')
-    } else if (message.content.includes('night')) {
-      const msgNight = msg + 'night'
+      // this.wRcon.run('say ' + msgDay + ' from the Discord server')
+      // message.reply('setting time to day...')
+    } else if (message.includes('night')) {
+      // const msgNight = msg + 'night'
       this.wRcon.run('env.time 23')
-      this.wRcon.run('say ' + msgNight)
-      message.reply('setting time to night...')
+      // this.wRcon.run('say ' + msgNight)
+      // message.reply('setting time to night...')
     }
   }
 }
