@@ -23,6 +23,7 @@ GEM
       ffi
     rbnacl (3.4.0)
       ffi
+    redis (4.0.1)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -40,6 +41,7 @@ PLATFORMS
 
 DEPENDENCIES
   discordrb
+  redis
   rest-client
 
 BUNDLED WITH
