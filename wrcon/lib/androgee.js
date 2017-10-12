@@ -5,10 +5,20 @@ const Redis = require('redis')
 class Androgee {
   constructor () {
     // Establish a connection to Redis and setup error handling
-    this.redis = Redis.createClient({host: 'redis'})
+    this.redis = Redis.createClient({host: 'localhost'})
+    var rustSub = Redis.createClient({host: 'localhost'})
 
-    this.redis.on("error", function (err) {
-      console.log("Error " + err);
+    this.redis.on('error', function (err) {
+      console.log("this.redis " + err);
+    })
+
+    rustSub.on('error', function (err) {
+      console.log("rustSub " + err);
+    })
+
+    rustSub.subscribe('RustCommands')
+    rustSub.on('message', (channel, message) => {
+      this.rustConnection.setTime(message)
     })
 
     // Maintain references to open connections
