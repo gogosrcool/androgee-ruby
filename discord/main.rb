@@ -12,11 +12,14 @@ bot.ready do
 end
 
 bot.member_join do |event|
-  event.server.default_channel.send_message event.user.display_name + ' has joined! :wave:'
+  event.server.default_channel.send_message
+  event.user.display_name + ' has joined! :wave:'
 end
 
 bot.member_leave do |event|
-  event.server.text_channels.select { |channel| channel.name == 'debug' }.first.send_message event.user.username + ' just left the server!'
+  event.server.text_channels.select do |channel|
+    channel.name == 'debug'
+  end.first.send_message event.user.username + ' just left the server!'
 end
 
 bot.command :fortune do
