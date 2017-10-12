@@ -4,5 +4,7 @@ services:
     image: "redis:latest"
   androgee-wrcon:
     image: wrcon:latest
+    # build: "wrcon/"
   androgee-discord:
     image: "discord:latest"
+    # build: "discord/"
