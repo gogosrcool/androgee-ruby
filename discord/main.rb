@@ -9,6 +9,8 @@ bot = Discordrb::Commands::CommandBot.new token: ENV['RBBY'], prefix: '~'
 
 bot.ready do
   bot.game = json['games'].sample
+  test = ENV['EGEEIO_SERVER'].to_i
+  puts test
 end
 
 bot.member_join do |event|
@@ -24,6 +26,17 @@ end
 
 bot.command :fortune do
   '``' + `fortune -s | cowsay` + '``'
+end
+
+bot.command :translate do |event|
+  test = event.message.content.slice(11..event.message.content.length)
+  RestClient.post 'http://api.funtranslations.com/translate/jive.json', text: test do |response, request, result|
+    if result.code == '429'
+      JSON.parse(result.body).dig('error', 'message')
+    else
+      JSON.parse(response.body).dig('contents', 'translated')
+    end
+  end
 end
 
 bot.command :catpic do
@@ -46,19 +59,13 @@ bot.command :moo do
   '``' + `apt-get moo` + '``'
 end
 
-# TODO: Refactor this shit
-def message_engine(message)
-  else
-    if message.include?('~minecraft time')
-      minecraft_command(message)
-    elsif message.include?('~rust time')
-      redis2 = Redis.new(host: 'localhost')
-      redis2.publish('RustCommands', message)
-      'Done'
-    else
-      "I don't know that command. 😞"
-    end
+bot.command :rust do |event|
+  if event.message.content.include?('time')
+    redis = Redis.new(host: 'localhost')
+    redis.publish('RustCommands', event.message.content)
   end
+  'done'
+end
 
 Thread.new do
   redis = Redis.new(host: 'localhost')
@@ -66,9 +73,7 @@ Thread.new do
     puts 'subscribed to RustPlayers'
     on.message do |_channel, message|
       puts message
-      bot.servers[ENV['EGEEIO_SERVER']].text_channels.select do |channel|
-        channel.name == 'rust-server'
-      end.first.send_message(message)
+      announce_message 'rust-server', message, bot
     end
   end
 end
@@ -79,11 +84,17 @@ Thread.new do
     puts 'subscribed to newMinecraftPlayers'
     on.message do |_channel, message|
       puts message
-      bot.servers[ENV['EGEEIO_SERVER']].text_channels.select do |channel|
-        channel.name == 'modded-minecraft-server'
-      end.first.send_message(message)
+      announce_message 'modded-minecraft-server', message, bot
     end
   end
+end
+
+# TODO: array.select is kinda like a foreach.. slow as balls
+def announce_message(server, message, bot)
+  # TODO: shouldn't have to pass reference to bot in the method
+  bot.servers.dig(ENV['EGEEIO_SERVER'].to_i).text_channels.select do |channel|
+    channel.name == server
+  end.first.send_message(message)
 end
 
 bot.run
