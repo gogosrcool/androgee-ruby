@@ -1,3 +1,5 @@
+require 'faye/websocket'
+require 'eventmachine'
 require 'rest-client'
 require 'discordrb'
 require 'redis'
@@ -63,6 +65,25 @@ bot.command :rust do |event|
     redis.close
   end
   'done'
+end
+
+Thread.new do
+  EM.run do
+    ws = Faye::WebSocket::Client.new('ws://egee.io:28016/super_secret_password')
+    ws.on :connect do |event|
+      puts 'wrcon connected!'
+    end
+    ws.on :message do |event|
+      puts event.data # This works great
+      ws.send('say Hello Folks') # This causes the entire connection to error out
+    end
+    ws.on :disconnect do |event|
+      puts 'wrcon disconnected'
+    end
+    ws.on :error do |event|
+      puts 'wrcon connection errored out'
+    end
+  end
 end
 
 Thread.new do
