@@ -9,8 +9,6 @@ bot = Discordrb::Commands::CommandBot.new token: ENV['RBBY'], prefix: '~'
 
 bot.ready do
   bot.game = json['games'].sample
-  test = ENV['EGEEIO_SERVER'].to_i
-  puts test
 end
 
 bot.member_join do |event|
@@ -89,7 +87,7 @@ Thread.new do
   end
 end
 
- # TODO: shouldn't have to pass reference to bot in the method
+# TODO: shouldn't have to pass reference to bot in the method
 def announce_message(server, message, bot)
   # TODO: array.select is kinda like a foreach.. slow as balls
   bot.servers.dig(ENV['EGEEIO_SERVER'].to_i).text_channels.select do |channel|
