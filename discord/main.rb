@@ -12,8 +12,7 @@ bot.ready do
 end
 
 bot.member_join do |event|
-  event.server.default_channel.send_message
-  event.user.display_name + ' has joined! :wave:'
+  event.server.default_channel.send_message event.user.display_name + ' has joined! :wave:'
 end
 
 bot.member_leave do |event|
