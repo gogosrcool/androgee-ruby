@@ -61,6 +61,7 @@ bot.command :rust do |event|
   if event.message.content.include?('time')
     redis = Redis.new(host: 'localhost')
     redis.publish('RustCommands', event.message.content)
+    redis.close
   end
   'done'
 end
