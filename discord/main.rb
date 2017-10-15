@@ -89,9 +89,9 @@ Thread.new do
   end
 end
 
-# TODO: array.select is kinda like a foreach.. slow as balls
+ # TODO: shouldn't have to pass reference to bot in the method
 def announce_message(server, message, bot)
-  # TODO: shouldn't have to pass reference to bot in the method
+  # TODO: array.select is kinda like a foreach.. slow as balls
   bot.servers.dig(ENV['EGEEIO_SERVER'].to_i).text_channels.select do |channel|
     channel.name == server
   end.first.send_message(message)
