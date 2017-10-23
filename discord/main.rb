@@ -1,5 +1,3 @@
-require 'faye/websocket'
-require 'eventmachine'
 require 'rest-client'
 require 'discordrb'
 require 'redis'
@@ -60,50 +58,49 @@ end
 
 bot.command :rust do |event|
   if event.message.content.include?('time')
-    redis = Redis.new(host: 'localhost')
+    redis = Redis.new(host: 'redis')
     redis.publish('RustCommands', event.message.content)
     redis.close
   end
   'done'
 end
 
-Thread.new do
-  EM.run do
-    ws = Faye::WebSocket::Client.new('ws://egee.io:28016/super_secret_password')
-    ws.on :connect do |event|
-      puts 'wrcon connected!'
-    end
-    ws.on :message do |event|
-      puts event.data # This works great
-      ws.send('say Hello Folks') # This causes the entire connection to error out
-    end
-    ws.on :disconnect do |event|
-      puts 'wrcon disconnected'
-    end
-    ws.on :error do |event|
-      puts 'wrcon connection errored out'
-    end
-  end
+bot.command :minecraft do |event|
+  puts 'recieved input for Minecraft'
+  redis = Redis.new(host: 'redis')
+  redis.publish('Minecraft', event.message.content)
+  redis.close
 end
 
 Thread.new do
-  redis = Redis.new(host: 'localhost')
+  redis = Redis.new(host: 'redis')
   redis.subscribe('RustPlayers') do |on|
     puts 'subscribed to RustPlayers'
     on.message do |_channel, message|
       puts message
-      announce_message 'rust-server', message, bot
+      announce_message 'rust-server', event.message.content, bot
     end
   end
 end
 
 Thread.new do
-  redis = Redis.new(host: 'localhost')
+  redis = Redis.new(host: 'redis')
   redis.subscribe('newMinecraftPlayers') do |on|
     puts 'subscribed to newMinecraftPlayers'
     on.message do |_channel, message|
       puts message
       announce_message 'modded-minecraft-server', message, bot
+    end
+  end
+end
+
+Thread.new do
+  redis = Redis.new(host: 'redis')
+  redis.subscribe('MinecraftPlayers') do |on|
+    puts 'subscribed to newMinecraftPlayers'
+    on.message do |_channel, message|
+      puts message
+      announce_message 'debug', message, bot
     end
   end
 end
