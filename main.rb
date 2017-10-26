@@ -65,12 +65,12 @@ bot.command :rust do |event|
   'done'
 end
 
-bot.command :minecraft do |event|
-  puts 'recieved input for Minecraft'
-  redis = Redis.new(host: 'redis')
-  redis.publish('Minecraft', event.message.content)
-  redis.close
-end
+# bot.command :minecraft do |event|
+#   puts 'recieved input for Minecraft'
+#   redis = Redis.new(host: 'redis')
+#   redis.publish('Minecraft', event.message.content)
+#   redis.close
+# end
 
 Thread.new do
   redis = Redis.new(host: 'redis')
