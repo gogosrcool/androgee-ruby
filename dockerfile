@@ -1,6 +1,6 @@
 FROM ruby:2.4
 ENV PATH $PATH:/usr/games
-ENV RBBY $DISCORD_TOKEN
+ENV RBBY _DISCORDTOKEN_
 WORKDIR /opt/
 ADD . /opt/
 RUN apt-get update && apt-get install -y fortune cowsay
