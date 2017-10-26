@@ -3,7 +3,7 @@
 sed -i s/_DISCORDTOKEN_/$DISCORD_TOKEN/g dockerfile
 docker build . -t discord
 
-git clone 
+git clone
 git clone https://github.com/egee-irl/andro-wrcon.git
 cd andro-wrcon
 sed -i s/localhost/redis/g main.coffee
