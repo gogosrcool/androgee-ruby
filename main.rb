@@ -1,3 +1,5 @@
+require 'faye/websocket'
+require 'eventmachine'
 require 'rest-client'
 require 'discordrb'
 require 'redis'
@@ -58,58 +60,59 @@ end
 
 bot.command :rust do |event|
   if event.message.content.include?('time')
-    redis = Redis.new(host: 'redis')
+    redis = Redis.new(host: 'localhost')
     redis.publish('RustCommands', event.message.content)
     redis.close
   end
   'done'
 end
 
-# bot.command :minecraft do |event|
-#   puts 'recieved input for Minecraft'
-#   redis = Redis.new(host: 'redis')
-#   redis.publish('Minecraft', event.message.content)
-#   redis.close
-# end
-
 Thread.new do
-  redis = Redis.new(host: 'redis')
-  redis.subscribe('RustPlayers') do |on|
-    puts 'subscribed to RustPlayers'
-    on.message do |_channel, message|
-      puts message
-      announce_message 'rust-server', event.message.content, bot
+  EM.run do
+    ws = Faye::WebSocket::Client.new('ws://' + ENV['RUST_IP'] + ':28016/' + ENV['RUST_PASSWORD'])
+    ws.on :connect do |event|
+      puts 'wrcon connected!'
+    end
+    ws.on :message do |event|
+      parse_rust_message(event.data, bot)
+      #ws.send('say Hello Folks') # This causes the entire connection to error out
+    end
+    ws.on :disconnect do |event|
+      puts 'wrcon disconnected'
+    end
+    ws.on :error do |event|
+      puts 'wrcon connection errored out'
     end
   end
 end
 
-# Thread.new do
-#   redis = Redis.new(host: 'redis')
-#   redis.subscribe('newMinecraftPlayers') do |on|
-#     puts 'subscribed to newMinecraftPlayers'
-#     on.message do |_channel, message|
-#       puts message
-#       announce_message 'modded-minecraft-server', message, bot
-#     end
-#   end
-# end
+Thread.new do
+  redis = Redis.new(host: 'localhost')
+  redis.subscribe('RustPlayers') do |on|
+    puts 'subscribed to RustPlayers'
+    on.message do |_channel, message|
+      puts message
+      announce_message 'rust-server', message, bot
+    end
+  end
+end
 
-# Thread.new do
-#   redis = Redis.new(host: 'redis')
-#   redis.subscribe('MinecraftPlayers') do |on|
-#     puts 'subscribed to newMinecraftPlayers'
-#     on.message do |_channel, message|
-#       puts message
-#       announce_message 'debug', message, bot
-#     end
-#   end
-# end
+# TODO: Remove redundant chat message logs
+def parse_rust_message(message, bot)
+  message_parsed = JSON.parse(message)['Message']
+  if (message_parsed.include?('has entered the game'))
+    bot.servers.dig(ENV['EGEEIO_SERVER'].to_i).text_channels.select do |channel|
+      channel.name == 'rust-server'
+    end.first.send_message(message_parsed.gsub!(/\[.*\]/, ''))
+  end
+  puts message_parsed
+end
 
 # TODO: shouldn't have to pass reference to bot in the method
-def announce_message(server, message, bot)
+def announce_message(channel, message, bot)
   # TODO: array.select is kinda like a foreach.. slow as balls
   bot.servers.dig(ENV['EGEEIO_SERVER'].to_i).text_channels.select do |channel|
-    channel.name == server
+    channel.name == channel
   end.first.send_message(message)
 end
 
