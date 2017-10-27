@@ -12,6 +12,10 @@ GEM
     domain_name (0.5.20170404)
       unf (>= 0.0.5, < 1.0.0)
     event_emitter (0.2.6)
+    eventmachine (1.2.5)
+    faye-websocket (0.10.7)
+      eventmachine (>= 0.12.0)
+      websocket-driver (>= 0.5.1)
     ffi (1.9.18)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -35,12 +39,17 @@ GEM
     websocket-client-simple (0.3.0)
       event_emitter
       websocket
+    websocket-driver (0.7.0)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.2)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   discordrb
+  eventmachine
+  faye-websocket
   redis
   rest-client
 
