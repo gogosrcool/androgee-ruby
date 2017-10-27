@@ -2,6 +2,8 @@
 
 sed -i s/_DISCORDTOKEN_/$DISCORD_TOKEN/g dockerfile
 sed -i s/localhost/redis/g main.rb
+sed -i s/_RUSTIP_/$RUST_IP/g dockerfile
+sed -i s/_RUSTPASSWORD_/$RUST_PASSWORD/g dockerfile
 docker build . -t discord
 
 git clone
