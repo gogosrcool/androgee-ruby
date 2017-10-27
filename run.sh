@@ -1,6 +1,7 @@
 #!/bin/bash
 
 sed -i s/_DISCORDTOKEN_/$DISCORD_TOKEN/g dockerfile
+sed -i s/localhost/redis/g main.rb
 docker build . -t discord
 
 git clone
