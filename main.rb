@@ -69,6 +69,7 @@ end
 
 Thread.new do
   EM.run do
+    puts 'ws://' + ENV['RUST_IP'] + ':28016/' + ENV['RUST_PASSWORD'] # Debugging because Docker networking is a nightmare
     ws = Faye::WebSocket::Client.new('ws://' + ENV['RUST_IP'] + ':28016/' + ENV['RUST_PASSWORD'])
     ws.on :connect do |event|
       puts 'wrcon connected!'
@@ -81,18 +82,7 @@ Thread.new do
       puts 'wrcon disconnected'
     end
     ws.on :error do |event|
-      puts 'wrcon connection errored out'
-    end
-  end
-end
-
-Thread.new do
-  redis = Redis.new(host: 'localhost')
-  redis.subscribe('RustPlayers') do |on|
-    puts 'subscribed to RustPlayers'
-    on.message do |_channel, message|
-      puts message
-      announce_message 'rust-server', message, bot
+      puts 'wrcon connection errored out: ' + event.data
     end
   end
 end
@@ -101,9 +91,13 @@ end
 def parse_rust_message(message, bot)
   message_parsed = JSON.parse(message)['Message']
   if (message_parsed.include?('has entered the game'))
+    parsed_message = message_parsed.gsub!(/\[.*\]/, '')
     bot.servers.dig(ENV['EGEEIO_SERVER'].to_i).text_channels.select do |channel|
       channel.name == 'rust-server'
-    end.first.send_message(message_parsed.gsub!(/\[.*\]/, ''))
+    end.first.send_message(parsed_message)
+    redis = Redis.new(host: 'localhost')
+    redis.publish('RustCommands', parsed_message)
+    redis.close
   end
   puts message_parsed
 end
