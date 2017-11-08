@@ -64,7 +64,7 @@ end
 
 bot.command :rust do |event|
   if event.message.content.include?('time')
-    redis = Redis.new(host: 'localhost')
+    redis = Redis.new(host: ENV['REDIS'])
     redis.publish('RustCommands', event.message.content)
     redis.close
   end
@@ -91,13 +91,13 @@ Thread.new do
   end
 end
 
-# TODO: Remove redundant chat message logs
+# TODO: This function sucks and should be refactored
 def parse_rust_message(message, bot)
   message_parsed = JSON.parse(message)['Message']
   if message_parsed.include?('has entered the game')
     parsed_message = message_parsed.gsub!(/\[.*\]/, '')
     $rust_channel.send_message(parsed_message) if $rust_channel.history(1).first.content != parsed_message
-    redis = Redis.new(host: 'localhost')
+    redis = Redis.new(host: ENV['REDIS'])
     redis.publish('RustCommands', parsed_message)
     redis.close
   end
