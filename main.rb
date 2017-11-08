@@ -5,11 +5,15 @@ require 'discordrb'
 require 'redis'
 require 'json'
 
+$rust_channel = nil
 file = File.read('blob.json')
 json = JSON.parse(file)
 bot = Discordrb::Commands::CommandBot.new token: ENV['RBBY'], prefix: '~'
 
 bot.ready do
+  $rust_channel = bot.servers.dig(ENV['EGEEIO_SERVER'].to_i).text_channels.select do |channel|
+    channel.name == 'rust-server'
+  end.first
   bot.game = json['games'].sample
 end
 
@@ -76,7 +80,7 @@ Thread.new do
     end
     ws.on :message do |event|
       parse_rust_message(event.data, bot)
-      #ws.send('say Hello Folks') # This causes the entire connection to error out
+      # ws.send('say Hello Folks') # This causes the entire connection to error out
     end
     ws.on :disconnect do |event|
       puts 'wrcon disconnected'
@@ -90,14 +94,12 @@ end
 # TODO: Remove redundant chat message logs
 def parse_rust_message(message, bot)
   message_parsed = JSON.parse(message)['Message']
-  if (message_parsed.include?('has entered the game'))
+  if message_parsed.include?('has entered the game')
     parsed_message = message_parsed.gsub!(/\[.*\]/, '')
-    bot.servers.dig(ENV['EGEEIO_SERVER'].to_i).text_channels.select do |channel|
-      channel.name == 'rust-server'
-    end.first.send_message(parsed_message)
-    redis = Redis.new(host: 'localhost')
-    redis.publish('RustCommands', parsed_message)
-    redis.close
+    $rust_channel.send_message(parsed_message) if $rust_channel.history(1).first.content != parsed_message
+    # redis = Redis.new(host: 'localhost')
+    # redis.publish('RustCommands', parsed_message)
+    # redis.close
   end
   puts message_parsed
 end
