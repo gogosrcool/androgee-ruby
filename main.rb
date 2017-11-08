@@ -64,11 +64,15 @@ end
 
 bot.command :rust do |event|
   if event.message.content.include?('time')
-    redis = Redis.new(host: ENV['REDIS'])
-    redis.publish('RustCommands', event.message.content)
-    redis.close
+    if $rust_channel.history(1).first.content != event.message.content
+      redis = Redis.new(host: ENV['REDIS'])
+      redis.publish('RustCommands', event.message.content)
+      redis.close
+      'Done'
+    end
+  else
+    'Try again later.'
   end
-  'done'
 end
 
 Thread.new do
