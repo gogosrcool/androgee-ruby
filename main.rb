@@ -97,9 +97,9 @@ def parse_rust_message(message, bot)
   if message_parsed.include?('has entered the game')
     parsed_message = message_parsed.gsub!(/\[.*\]/, '')
     $rust_channel.send_message(parsed_message) if $rust_channel.history(1).first.content != parsed_message
-    # redis = Redis.new(host: 'localhost')
-    # redis.publish('RustCommands', parsed_message)
-    # redis.close
+    redis = Redis.new(host: 'localhost')
+    redis.publish('RustCommands', parsed_message)
+    redis.close
   end
   puts message_parsed
 end
