@@ -5,6 +5,7 @@ require 'discordrb'
 require 'redis'
 require 'json'
 
+Thread.abort_on_exception=true
 $rust_channel = nil
 file = File.read('blob.json')
 json = JSON.parse(file)
@@ -76,18 +77,26 @@ bot.command :rust do |event|
 end
 
 Thread.new do
+  redis = Redis.new(host: ENV['REDIS'])
+  redis.subscribe('error') do |on|
+    on.message do |_channel, message|
+    puts message
+    end
+  end
+end
+
+Thread.new do
   EM.run do
     puts 'ws://' + ENV['RUST_IP'] + ':28016/' + ENV['RUST_PASSWORD'] # Debugging because Docker networking is a nightmare
     ws = Faye::WebSocket::Client.new('ws://' + ENV['RUST_IP'] + ':28016/' + ENV['RUST_PASSWORD'])
-    ws.on :connect do |event|
-      puts 'wrcon connected!'
+    ws.on :open do 
+      puts 'Connected to Rust WebSocket.'
     end
     ws.on :message do |event|
       parse_rust_message(event.data, bot)
-      # ws.send('say Hello Folks') # This causes the entire connection to error out
     end
-    ws.on :disconnect do |event|
-      puts 'wrcon disconnected'
+    ws.on :close do |code, reason|
+      puts "WebSocket closed: #{code} #{reason}"
     end
     ws.on :error do |event|
       puts 'wrcon connection errored out: ' + event.data
