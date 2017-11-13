@@ -76,33 +76,7 @@ bot.command :rust do |event|
   end
 end
 
-Thread.new do
-  redis = Redis.new(host: ENV['REDIS'])
-  redis.subscribe('error') do |on|
-    on.message do |_channel, message|
-    puts message
-    end
-  end
-end
-
-Thread.new do
-  EM.run do
-    puts 'ws://' + ENV['RUST_IP'] + ':28016/' + ENV['RUST_PASSWORD'] # Debugging because Docker networking is a nightmare
-    ws = Faye::WebSocket::Client.new('ws://' + ENV['RUST_IP'] + ':28016/' + ENV['RUST_PASSWORD'])
-    ws.on :open do 
-      puts 'Connected to Rust WebSocket.'
-    end
-    ws.on :message do |event|
-      parse_rust_message(event.data, bot)
-    end
-    ws.on :close do |code, reason|
-      puts "WebSocket closed: #{code} #{reason}"
-    end
-    ws.on :error do |event|
-      puts 'wrcon connection errored out: ' + event.data
-    end
-  end
-end
+bot.run :async
 
 # TODO: This function sucks and should be refactored
 def parse_rust_message(message, bot)
@@ -125,4 +99,20 @@ def announce_message(channel, message, bot)
   end.first.send_message(message)
 end
 
-bot.run
+EM.run do
+  puts 'ws://' + ENV['RUST_IP'] + ':28016/' + ENV['RUST_PASSWORD'] # Debugging because Docker networking is a nightmare
+  ws = Faye::WebSocket::Client.new('ws://' + ENV['RUST_IP'] + ':28016/' + ENV['RUST_PASSWORD'])
+  ws.on :open do
+    puts 'Connected to Rust WebSocket.'
+    # ws.send("{Message: 'say hello, again!', Type: 'Command'}")
+  end
+  ws.on :message do |event|
+    parse_rust_message(event.data, bot)
+  end
+  ws.on :close do |code, reason|
+    puts "WebSocket closed: #{code} #{reason}"
+  end
+  ws.on :error do |event|
+    puts 'wrcon connection errored out: ' + event.data
+  end
+end
