@@ -5,7 +5,6 @@ require 'discordrb'
 require 'redis'
 require 'json'
 
-Thread.abort_on_exception=true
 $rust_channel = nil
 file = File.read('blob.json')
 json = JSON.parse(file)
