@@ -9,7 +9,7 @@ class DiscordEvents
     general_messages
   end
 
-  # Farts
+  # Server event handler
   def server_events
     @discord.member_join do |event|
       event.server.default_channel.send_message event.user.display_name + ' has joined! :wave:'
@@ -21,14 +21,14 @@ class DiscordEvents
     end
   end
 
-  # Messages that are helpful or whatever
+  # General message event handler
   def general_messages
     @discord.command :help do
       'Basically just issue commands and I will respond to them.'
     end
   end
 
-  # Messages that serve no purpose other than to be fun
+  # Fun message event handler
   def fun_messages
     @discord.command :fortune do
       '``' + `fortune -s | cowsay` + '``'
