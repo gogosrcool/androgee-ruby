@@ -16,5 +16,8 @@ class ConnectionFactory
   end
 
   def rcon_connection
+    rcon = RCon::Query::Minecraft.new(ENV['MINECRAFT_IP'], ENV['MINECRAFT_PORT'])
+    rcon.auth(ENV['MINECRAFT_PASSWORD'])
+    rcon
   end
 end

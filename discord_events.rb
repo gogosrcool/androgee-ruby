@@ -2,11 +2,26 @@
 
 # The object that contains and handles all events associated with Discord
 class DiscordEvents
-  def initialize(discord)
+  def initialize(discord, connection_factory, helpers)
+    @connection_factory = connection_factory
+    @helpers = helpers
     @discord = discord
     fun_messages
     server_events
     general_messages
+    game_messages
+  end
+
+  def game_messages
+    @discord.command :minecraft_list do
+      rcon = @connection_factory.rcon_connection
+      players = rcon.command('list').slice!(30..-1)
+      rcon.disconnect
+
+      current_players = players.split(/\s*,\s*/).sort
+      normalized = current_players.to_s.chop![1..-1].gsub('"','')
+      @helpers.get_discord_channel('minecraft-server').send_message("The following players are online: #{normalized}")
+    end
   end
 
   # Server event handler

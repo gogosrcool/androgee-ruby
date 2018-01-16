@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 
+gem 'differ'
 gem 'discordrb'
-gem 'redis'
-gem 'rest-client'
-gem 'faye-websocket'
 gem 'eventmachine'
+gem 'faye-websocket'
+gem 'rest-client'
+gem 'timers'

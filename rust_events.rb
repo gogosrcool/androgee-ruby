@@ -38,10 +38,12 @@ class RustEvents
   def parse_rust_message(message)
     message_parsed = JSON.parse(message)['Message']
     if message_parsed.include?('has entered the game')
-      rust_channel = @helpers.get_discord_channel('debug')
+      rust_channel = @helpers.get_discord_channel('rust-server')
       parsed_message = message_parsed.gsub!(/\[.*\]/, '')
-      rust_channel.send_message(parsed_message) if rust_channel.history(1).first.content != parsed_message
-      @ws.send("{Message: 'say hello!', Type: 'Command'}")
+      if rust_channel.history(1).first.content != parsed_message
+        rust_channel.send_message(parsed_message)
+        @ws.send("{Message: 'say #{parsed_message}', Type: 'Command'}")
+      end
     end
     puts message_parsed
   end
