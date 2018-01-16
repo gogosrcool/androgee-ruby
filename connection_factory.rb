@@ -4,7 +4,7 @@ require 'faye/websocket'
 require 'discordrb'
 require './rcon.rb'
 
-# Factory object that returns connections 
+# Factory object that returns connections
 class ConnectionFactory
   def discord_connection
     abort('First arg must be a Discord token!') if ARGV.first.nil?
