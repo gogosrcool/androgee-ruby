@@ -4,6 +4,7 @@ services:
     build:
       context: .
       args:
+        egeeio_server:      $EGEEIO_SERVER
         rust_ip:            $RUST_IP
         rust_port:          $RUST_PORT
         rust_password:      $RUST_PASSWORD
