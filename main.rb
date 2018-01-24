@@ -21,6 +21,7 @@ class Androgee
       bot.game = json['games'].sample
       DiscordEvents.new(bot, connection_factory, helpers)
       Thread.new { RustEvents.new(connection_factory, helpers) }
+      Thread.abort_on_exception = true
       minecraft_loop(connection_factory, helpers)
     end
     bot.run
