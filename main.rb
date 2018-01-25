@@ -15,10 +15,10 @@ class Androgee
     json = JSON.parse(File.read('blob.json'))
     connection_factory = ConnectionFactory.new
     bot = connection_factory.discord_connection
-    helpers = Helpers.new(bot)
     bot.ready do
       puts 'Connected to Discord Server'
       bot.game = json['games'].sample
+      helpers = Helpers.new(bot)
       DiscordEvents.new(bot, connection_factory, helpers)
       Thread.new { RustEvents.new(connection_factory, helpers) }
       Thread.abort_on_exception = true
