@@ -14,38 +14,37 @@ class RustEvents
       error
     end
   end
+
   def open
     @ws.on :open do
       puts 'Connected to Rust WebSocket.'
     end
   end
+
   def message
     @ws.on :message do |event|
-      parse_rust_message(event.data)
-      puts event.data
+      message = JSON.parse(event.data)['Message'] # Sometimes Rust nests json
+      message = JSON.parse(message)['Message'] if message.start_with?('{')
+      msg = @helpers.process_rust_message(message)
+      if msg.is_a?(Hash)
+        if msg.key?('debug')
+          puts "RUST DEBUG: #{msg['debug']}"
+        elsif msg.key?('server')
+          @ws.send(msg['server'])
+        end
+      end
     end
   end
+
   def close
     @ws.on :close do |code, reason|
-      puts "WebSocket closed: #{code} #{reason}"
+      @helpers.debug_notification("**Rust Server** - #{code} #{reason}")
     end
   end
+
   def error
     @ws.on :error do |event|
       @helpers.debug_notification("**Rust Server** - #{event.message}")
-    end
-  end
-  def parse_rust_message(message)
-    message_parsed = JSON.parse(message)['Message']
-    if message_parsed.include?('has entered the game')
-      rust_channel = @helpers.get_discord_channel('rust-server')
-      parsed_message = message_parsed.gsub!(/\[.*\]/, '')
-      if rust_channel.history(1).first.content != parsed_message
-        rust_channel.send_message(parsed_message)
-        normalized = parsed_message.sub('entered the game', 'joined')
-        rust_msg = "{Message: 'say #{normalized}', Type: 'Command'}"
-        @ws.send(rust_msg)
-      end
     end
   end
 end
