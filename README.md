@@ -4,9 +4,4 @@
 [![Discord](https://discordapp.com/api/guilds/183740337976508416/widget.png?style=shield)](https://discord.gg/tVyBHAU)
 
 #### Q: What is this?
-**A:** This ~~is~~ was a Discord bot written in Ruby for the Egee.io community to do a myriad of things. It has since been deprecated.
-
-#### Q: What happened?
-**A:** Community support for Ruby wasn't as impressive as I had hoped and I've fallen out of love with Ruby 💔
-
-This project has been deprecated and will not be receving updates 😿
+**A:** This is _the_ bot written for the Egee.io community.
