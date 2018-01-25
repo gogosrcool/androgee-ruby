@@ -40,8 +40,8 @@ class RustEvents
     if message_parsed.include?('has entered the game')
       rust_channel = @helpers.get_discord_channel('rust-server')
       parsed_message = message_parsed.gsub!(/\[.*\]/, '')
-      rust_channel.send_message(parsed_message)
       if rust_channel.history(1).first.content != parsed_message
+        rust_channel.send_message(parsed_message)
         normalized = parsed_message.sub('entered the game', 'joined')
         rust_msg = "{Message: 'say #{normalized}', Type: 'Command'}"
         @ws.send(rust_msg)
