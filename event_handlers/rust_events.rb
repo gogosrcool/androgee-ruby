@@ -27,14 +27,13 @@ class RustEvents
   def message
     @ws.on :message do |event|
       msg = @rust_helpers.process_message(event)
-      puts "RUST: #{msg}" if msg.to_s.empty? == false
-      if msg.is_a?(Hash)
-        if msg.key?('COMMAND')
-          @ws.send(msg['COMMAND']) if @helpers.check_last_message(@rust_channel, msg['COMMAND']) == false
-        elsif msg.key?('SERVER')
-          if @helpers.check_last_message(@rust_channel, msg['SERVER']) == false
-            @rust_channel.send_message(@rust_helpers.rust_server_message(msg['SERVER']))
-          end
+      next if msg.is_a?(Hash) == false
+      p "RUST: #{msg}"
+      if msg.key?('COMMAND')
+        @ws.send(msg['COMMAND']) if @helpers.check_last_message(@rust_channel, msg['COMMAND']) == false
+      elsif msg.key?('SERVER')
+        if @helpers.check_last_message(@rust_channel, msg['SERVER']) == false
+          @rust_channel.send_message(@rust_helpers.rust_server_message(msg['SERVER']))
         end
       end
     end
@@ -42,13 +41,13 @@ class RustEvents
 
   def close
     @ws.on :close do |code, reason|
-      # @helpers.debug_notification("**Rust Server** - #{code} #{reason}")
+      @helpers.debug_notification("**Rust Server** - #{code} #{reason}")
     end
   end
 
   def error
     @ws.on :error do |event|
-      # @helpers.debug_notification("**Rust Server** - #{event.message}")
+      @helpers.debug_notification("**Rust Server** - #{event.message}")
     end
   end
 end
