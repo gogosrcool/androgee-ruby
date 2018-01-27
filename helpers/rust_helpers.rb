@@ -4,16 +4,12 @@
 class RustHelpers
   def initialize(helpers)
     @helpers = helpers
-    @rust_channel = @helpers.get_discord_channel('debug')
   end
 
   def process_message(event)
     msg = process_rust_json(event)
     if msg['DEBUG'].to_s.include?('has entered the game')
       return rust_player_join(msg)
-    elsif msg['SERVER']
-      @rust_channel.send_message(rust_server_message(msg['SERVER']))
-      return msg
     elsif msg['COMMAND']
       return validate_command(msg)
     else
@@ -23,15 +19,17 @@ class RustHelpers
 
   def validate_command(msg)
     return if msg['Egee'].nil?
-    things = msg['Egee']
-    things[0] = ''
-    if things == 'time day'
-      { 'COMMAND' => "{Message: 'env.time 11', Type: 'Command'}" }
-    elsif things == 'time night'
-      { 'COMMAND' => "{Message: 'env.time 23', Type: 'Command'}" }
-    elsif things.include?('teleport')
-      { 'COMMAND' => "{Message: '#{things}', Type: 'Command'}" }
-    end
+    command = msg['Egee']
+    command[0] = ''
+    { 'COMMAND' => "{Message: '#{command}', Type: 'Command'}" }
+    # TODO: It would be nice to have alias for all players to use
+    # if things == 'time day'
+    #   { 'COMMAND' => "{Message: 'env.time 11', Type: 'Command'}" }
+    # elsif things == 'time night'
+    #   { 'COMMAND' => "{Message: 'env.time 23', Type: 'Command'}" }
+    # elsif things.include?('teleport')
+    #   { 'COMMAND' => "{Message: '#{things}', Type: 'Command'}" }
+    # end
   end
 
   def process_rust_json(event)
@@ -48,10 +46,8 @@ class RustHelpers
 
   def rust_player_join(message)
     parsed_message = message['DEBUG'].to_s.gsub!(/\[.*\]/, '')
-    if @rust_channel.history(1).first.content != parsed_message
-      normalized = parsed_message.sub('entered the game', 'joined')
-      { 'COMMAND' => "{Message: 'say #{normalized}', Type: 'Command'}" }
-    end
+    normalized = parsed_message.sub('entered the game', 'joined')
+    { 'COMMAND' => "{Message: 'say #{normalized}', Type: 'Command'}" }
   end
 
   def filter_rust_messages(message)

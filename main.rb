@@ -1,11 +1,10 @@
 # frozen_string_literal: true
 
+require('./event_handlers/discord_events.rb')
+require('./event_handlers/rust_events.rb')
+require('./helpers/discord_helpers.rb')
 require('./connection_factory.rb')
-require('./discord_events.rb')
-require('./rust_events.rb')
-require('./helpers.rb')
 require 'timers'
-require 'differ'
 
 $previous_players = []
 
@@ -18,11 +17,11 @@ class Androgee
     bot.ready do
       puts 'Connected to Discord Server'
       bot.game = json['games'].sample
-      helpers = Helpers.new(bot)
+      helpers = DiscordHelpers.new(bot)
       DiscordEvents.new(bot, connection_factory, helpers)
       Thread.new { RustEvents.new(connection_factory, helpers) }
       Thread.abort_on_exception = true
-      minecraft_loop(connection_factory, helpers)
+      # minecraft_loop(connection_factory, helpers)
     end
     bot.run
   end
@@ -48,16 +47,3 @@ class Androgee
 end
 
 Androgee.new
-
-# bot.command :rust do |event|
-#   if event.message.content.include?('time')
-#     if @rust_channel.history(1).first.content != event.message.content
-#       # redis = Redis.new(host: ENV['REDIS'])
-#       # redis.publish('RustCommands', event.message.content)
-#       # redis.close
-#       'Done'
-#     end
-#   else
-#     'Try again later.'
-#   end
-# end
