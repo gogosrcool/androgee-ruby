@@ -1,7 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    differ (0.1.2)
     discordrb (3.2.1)
       discordrb-webhooks (~> 3.2.0.1)
       opus-ruby
@@ -51,7 +50,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  differ
   discordrb
   eventmachine
   faye-websocket
