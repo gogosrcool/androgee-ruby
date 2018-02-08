@@ -24,4 +24,7 @@ class DiscordHelpers
   def check_last_message(channel, msg)
     channel.history(1).first.content.include?(msg)
   end
+  def delete_last_message(channel)
+    channel.history(1).first.delete()
+  end
 end
