@@ -11,5 +11,13 @@
         "Paladins: Champions of the Realm",
         "Sid Meier's Civilization V",
         "Star Wars: The Old Republic"
+    ],
+    "protected_roles": [
+        "Monsters",
+        "Muted",
+        "Titans (Super-Admins)",
+        "Demigods (Server-Admins)",
+        "Heroes",
+        "Bot Commander"
     ]
 }
