@@ -39,7 +39,36 @@ class DiscordEvents
   # General message event handler
   def general_messages
     @discord.command :help do
-      'Basically just issue commands and I will respond to them.'
+      "Mrj programmed me with the following commands:\n
+      * assign_role\n
+      * fortune\n
+      * chucknorris\n
+      * ghostbusters\n
+      * moo\n
+      * translate\n
+      * catpic\n
+      * catgif"
+    end
+    @discord.command :assign_role do |event|
+      json = JSON.parse(File.read('blob.json'))
+      role = event.message.content[13..-1]
+
+      json['protected_roles'].each do |r|
+        role = 'invalid' if r.include?(role)
+      end
+      event.server.roles.each do |r|
+        if r.name.include?(role)
+          event.author.add_role(r)
+          role = 'valid'
+        end
+      end
+      if role == 'invalid'
+        'Invalid role. Try something else.'
+      elsif role == 'valid'
+        'Done'
+      else
+        'Nope.'
+      end
     end
   end
 
@@ -58,6 +87,7 @@ class DiscordEvents
       '``' + `apt-get moo` + '``'
     end
     @discord.command :translate do |event|
+      @helpers.delete_last_message(event.channel)
       test = event.message.content.slice(11..event.message.content.length)
       RestClient.post 'http://api.funtranslations.com/translate/jive.json', text: test do |response, request, result|
         if result.code == '429'
