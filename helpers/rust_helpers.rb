@@ -3,6 +3,7 @@
 # Methods for performaning actions for the Rust server
 class RustHelpers
   def initialize(helpers)
+    # TODO: Not the greatest name... which helper is this?
     @helpers = helpers
   end
 
@@ -10,6 +11,8 @@ class RustHelpers
     msg = process_rust_json(event)
     if msg['DEBUG'].to_s.include?('has entered the game')
       return rust_player_join(msg)
+    elsif msg['DEBUG'].to_s.include?('used *kill* on ent:')
+      { 'SERVER' => msg['DEBUG'].to_s }
     elsif msg['COMMAND']
       return validate_command(msg)
     else
