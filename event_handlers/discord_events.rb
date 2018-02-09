@@ -40,14 +40,14 @@ class DiscordEvents
   def general_messages
     @discord.command :help do
       "Mrj programmed me with the following commands:\n
-      * assign_role\n
-      * fortune\n
-      * chucknorris\n
-      * ghostbusters\n
-      * moo\n
-      * translate\n
-      * catpic\n
-      * catgif"
+      ~assign_role\n
+      ~fortune\n
+      ~chucknorris\n
+      ~ghostbusters\n
+      ~moo\n
+      ~translate\n
+      ~catpic\n
+      ~catgif"
     end
     @discord.command :assign_role do |event|
       json = JSON.parse(File.read('blob.json'))
