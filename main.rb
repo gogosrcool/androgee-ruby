@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
+Thread.abort_on_exception = true
 require('./event_handlers/discord_events.rb')
 require('./event_handlers/rust_events.rb')
 require('./helpers/discord_helpers.rb')
 require('./connection_factory.rb')
-require 'timers'
+require('timers')
 
 $previous_players = []
 
@@ -20,7 +21,6 @@ class Androgee
       helpers = DiscordHelpers.new(bot)
       DiscordEvents.new(bot, connection_factory, helpers)
       Thread.new { RustEvents.new(connection_factory, helpers) }
-      Thread.abort_on_exception = true
       minecraft_loop(connection_factory, helpers)
     end
     bot.run
