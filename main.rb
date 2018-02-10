@@ -7,11 +7,10 @@ require('./helpers/discord_helpers.rb')
 require('./connection_factory.rb')
 require('timers')
 
-$previous_players = []
-
 # The object that does it all!
 class Androgee
   def initialize
+    @previous_players = []
     json = JSON.parse(File.read('blob.json'))
     connection_factory = ConnectionFactory.new
     bot = connection_factory.discord_connection
@@ -33,14 +32,15 @@ class Androgee
       rcon.disconnect
 
       current_players = players.split(/\s*,\s*/).sort
-      diff = current_players - $previous_players
+      diff = current_players - @previous_players
 
       if diff.empty? == false
-        normalized = diff.to_s.chop![1..-1].gsub('"','')
+        normalized = diff.to_s.chop![1..-1].delete('"')
         puts "#{normalized} joined the server"
-        helpers.get_discord_channel('minecraft-server').send_message("#{normalized} just joined the server")
+        helpers.get_discord_channel('minecraft-server')
+               .send_message("#{normalized} just joined the server")
       end
-      $previous_players = current_players
+      @previous_players = current_players
     end
     Thread.new { loop { timers.wait } }
   end
