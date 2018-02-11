@@ -11,19 +11,19 @@ require('timers')
 class Androgee
   def initialize
     @previous_players = []
-    json = JSON.parse(File.read('blob.json'))
     connection_factory = ConnectionFactory.new
     bot = connection_factory.discord_connection
     bot.ready do
-      puts 'Connected to Discord Server'
-      bot.game = json['games'].sample
+      bot.game = JSON.parse(File.read('blob.json'))['games'].sample
       helpers = DiscordHelpers.new(bot)
       DiscordEvents.new(bot, connection_factory, helpers)
       Thread.new { RustEvents.new(connection_factory, helpers) }
       minecraft_loop(connection_factory, helpers)
+      puts 'Connected to Discord Server'
     end
     bot.run
   end
+
   def minecraft_loop(connection_factory, helpers)
     timers = Timers::Group.new
     timers.now_and_every(60) do
@@ -36,9 +36,10 @@ class Androgee
 
       if diff.empty? == false
         normalized = diff.to_s.chop![1..-1].delete('"')
-        puts "#{normalized} joined the server"
+        annoucement_msg = "#{normalized} joined the server"
+        puts annoucement_msg
         helpers.get_discord_channel('minecraft-server')
-               .send_message("#{normalized} just joined the server")
+               .send_message("``#{annoucement_msg}``")
       end
       @previous_players = current_players
     end
