@@ -9,15 +9,10 @@ class RustHelpers
 
   def process_message(event)
     msg = process_rust_json(event)
-    if msg['DEBUG'].to_s.include?('has entered the game')
-      return rust_player_join(msg)
-    elsif msg['DEBUG'].to_s.include?('used *kill* on ent:')
-      { 'SERVER' => msg['DEBUG'].to_s }
-    elsif msg['COMMAND']
-      return validate_command(msg)
-    else
-      return msg
-    end
+    return { 'SERVER' => msg['DEBUG'].to_s } if msg['DEBUG'].to_s.include?('used *kill* on ent:')
+    return validate_command(msg) if msg['COMMAND']
+    return rust_player_join(msg) if msg['DEBUG'].to_s.include?('has entered the game')
+    msg
   end
 
   def validate_command(msg)
