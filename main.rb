@@ -5,7 +5,6 @@ require('./event_handlers/discord_events.rb')
 require('./event_handlers/rust_events.rb')
 require('./helpers/discord_helpers.rb')
 require('./connection_factory.rb')
-require('docker')
 require('timers')
 
 # The object that does it all!
@@ -47,8 +46,5 @@ class Androgee
     Thread.new { loop { timers.wait } }
   end
 end
-
-# puts Docker.info
-puts Docker::Container.all.first.json['Name']
 
 Androgee.new
