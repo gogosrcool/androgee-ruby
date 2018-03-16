@@ -10,15 +10,19 @@ require('timers')
 # The object that does it all!
 class Androgee
   def initialize
+    initialized = false
     @previous_players = []
     connection_factory = ConnectionFactory.new
     bot = connection_factory.discord_connection
     bot.ready do
       bot.game = JSON.parse(File.read('blob.json'))['games'].sample
-      helpers = DiscordHelpers.new(bot)
-      DiscordEvents.new(bot, connection_factory, helpers)
-      Thread.new { RustEvents.new(connection_factory, helpers) }
-      minecraft_loop(connection_factory, helpers)
+      unless initialized
+        helpers = DiscordHelpers.new(bot)
+        DiscordEvents.new(bot, connection_factory, helpers)
+        Thread.new { RustEvents.new(connection_factory, helpers) }
+        minecraft_loop(connection_factory, helpers)
+        initialized = true
+      end
       puts 'Connected to Discord Server'
     end
     bot.run
