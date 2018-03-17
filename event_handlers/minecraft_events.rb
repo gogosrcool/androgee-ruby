@@ -9,8 +9,9 @@ module MinecraftEvents
   extend DiscordHelpers
 
   ready do |event|
+    server = event.bot.server(ENV['EGEEIO_SERVER'].to_i)
     @previous_players ||= []
-    @minecraft_loop ||= minecraft_loop(event.server)
+    @minecraft_loop ||= minecraft_loop(server)
   end
 
   command :minecraft_list do |event|
@@ -29,7 +30,7 @@ module MinecraftEvents
   def minecraft_loop(server)
     timers = Timers::Group.new
     timers.now_and_every(60) do
-      rcon = ConnectionFactory.rcon_connection
+      rcon = Connections.rcon_connection
       players = rcon.command('list')[30..-1]
       rcon.disconnect
 

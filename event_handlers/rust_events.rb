@@ -6,6 +6,7 @@ require './helpers/rust_helpers'
 # Object that handles events coming from the Rust server
 module RustEvents
   extend Discordrb::EventContainer
+  extend DiscordHelpers
   extend RustHelpers
 
   ready do |event|
@@ -13,7 +14,7 @@ module RustEvents
     @rust_eventmachine ||= Thread.new do
       EM.run do
         @ws = Connections.wrcon_connection
-        @server = event.server
+        @server = event.bot.server(ENV['EGEEIO_SERVER'].to_i)
         on_open
         on_message
         on_close
