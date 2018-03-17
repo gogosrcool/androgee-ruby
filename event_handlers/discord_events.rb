@@ -11,27 +11,33 @@ module DiscordEvents
 
   # Server event handler
   member_join do |event|
-    event.server.default_channel.send_message(event.user.display_name + ' has joined! :wave:')
+    event.server
+      .default_channel
+      .send_message("#{event.user.display_name} has joined! :wave:")
   end
 
   member_leave do |event|
-    debug_channel(event.server).send_message(event.user.username + ' just left the server.')
+    debug_channel(event.server)
+      .send_message("#{event.user.username} just left the server.")
   end
 
   # General message event handler
   command :help do
-    "Mrj programmed me with the following commands:\n
-    ~assign_role\n
-    ~fortune\n
-    ~chucknorris\n
-    ~ghostbusters\n
-    ~moo\n
-    ~translate\n
-    ~catpic\n
-    ~catgif"
+    <<~TEXT
+      Mrj programmed me with the following commands:
+      ~assign_role
+      ~fortune
+      ~chucknorris
+      ~ghostbusters
+      ~moo
+      ~translate
+      ~catpic
+      ~catgif
+    TEXT
   end
 
-  command :assign_role do |event|
+  command :assign_role do |event, *role|
+    role = role.join(' ')
     json = JSON.parse(File.read('blob.json'))
     role = event.message.content[13..-1]
 
@@ -55,19 +61,19 @@ module DiscordEvents
 
   # Fun message event handler
   command :fortune do
-    '``' + `fortune -s | cowsay` + '``'
+    "```\n#{`fortune -s | cowsay`}\n```"
   end
 
   command :chucknorris do
-    JSON.parse(RestClient.get('http://api.icndb.com/jokes/random?exclude=[explicit]'))['value']['joke']
+    JSON.parse(RestClient.get('http://api.icndb.com/jokes/random?exclude=[explicit]')).dig('value', 'joke')
   end
 
   command :ghostbusters do
-    '``' + `cowsay -f ghostbusters Who you Gonna Call` + '``'
+    "```\n#{`cowsay -f ghostbusters Who you Gonna Call`}\n```"
   end
 
   command :moo do
-    '``' + `apt-get moo` + '``'
+    "```\n#{`apt-get moo`}\n```"
   end
 
   command :translate do |event|

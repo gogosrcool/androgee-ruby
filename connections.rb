@@ -16,7 +16,7 @@ module Connections
   end
 
   def wrcon_connection
-    Faye::WebSocket::Client.new('ws://' + ENV['RUST_IP'] + ':28016/' + ENV['RUST_PASSWORD'])
+    Faye::WebSocket::Client.new("ws://#{ENV['RUST_IP']}:28016/#{ENV['RUST_PASSWORD']}")
   end
 
   def rcon_connection
