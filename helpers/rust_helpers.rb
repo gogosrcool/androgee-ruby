@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
-# Methods for performaning actions for the Rust server
-class RustHelpers
-  def initialize(helpers)
-    # TODO: Not the greatest name... which helper is this?
-    @helpers = helpers
-  end
+require 'json'
+require './helpers/discord_helpers.rb'
 
+# Methods for performaning actions for the Rust server
+module RustHelpers
+  extend DiscordHelpers
+
+  # @return [String]
   def process_message(event)
     msg = process_rust_json(event)
     return { 'SERVER' => msg['DEBUG'].to_s } if msg['DEBUG'].to_s.include?('used *kill* on ent:')
@@ -15,6 +16,8 @@ class RustHelpers
     msg
   end
 
+  # @param msg [Hash]
+  # @return [Hash]
   def validate_command(msg)
     return if msg['Egee'].nil?
     command = msg['Egee']
@@ -30,6 +33,8 @@ class RustHelpers
     # end
   end
 
+  # @param event
+  # @return [String, Hash]
   def process_rust_json(event)
     message = JSON.parse(event.data)['Message']
     if message.start_with?('{')
@@ -42,12 +47,16 @@ class RustHelpers
     filter_rust_messages(message)
   end
 
+  # @param message [Hash]
+  # @return [Hash]
   def rust_player_join(message)
     parsed_message = message['DEBUG'].to_s.gsub!(/\[.*\]/, '')
     normalized = parsed_message.sub('entered the game', 'joined')
     { 'COMMAND' => "{Message: 'say #{normalized}', Type: 'Command'}" }
   end
 
+  # @param message [Hash]
+  # @return [String, Hash]
   def filter_rust_messages(message)
     message = '' if message['DEBUG'].to_s.include?('totalstall(')
     message = '' if message['DEBUG'].to_s.include?('Saving complete')
@@ -55,7 +64,14 @@ class RustHelpers
     message
   end
 
+  # @return [String]
   def rust_server_message(msg)
     "``#{msg}``"
+  end
+
+  # @param server [Discordrb::Server]
+  # @return [Discordrb::Channel]
+  def rust_channel(server)
+    @rust_channel ||= debug_channel(server)
   end
 end

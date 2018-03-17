@@ -1,14 +1,18 @@
 # frozen_string_literal: true
 
-require 'faye/websocket'
 require 'discordrb'
+require 'faye/websocket'
 require './rcon.rb'
 
 # Factory object that returns connections
-class ConnectionFactory
+module Connections
+  module_function
+
   def discord_connection
-    abort('First arg must be a Discord token!') if ARGV.first.nil?
-    Discordrb::Commands::CommandBot.new(token: ARGV.first, prefix: '~')
+    token = ENV.fetch('DISCORD_TOKEN') { ARGV.first }
+    client_id = (ENV.fetch('DISCORD_CLIENT_ID') { ARGV.last })&.to_i
+    abort('First arg must be a Discord token!') if token.nil?
+    Discordrb::Commands::CommandBot.new(token: token, client_id: client_id, prefix: '~')
   end
 
   def wrcon_connection
