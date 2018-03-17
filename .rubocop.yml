@@ -1,0 +1,28 @@
+AllCops:
+  TargetRubyVersion: 2.4
+  DisplayCopNames: true
+  # DisabledByDefault: true
+  Exclude:
+    - rcon.rb
+
+Bundler/OrderedGems:
+  Enabled: false
+
+Metrics/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/Documentation:
+  Enabled: false
+
+# FIXME?:
+Style/EmptyMethod:
+  Enabled: false
