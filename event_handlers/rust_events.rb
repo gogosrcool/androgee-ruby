@@ -34,14 +34,14 @@ module RustEvents
   def on_message
     @ws.on :message do |event|
       msg = process_message(event)
-      next if msg.is_a?(Hash) == false
-      p "RUST: #{msg}"
-      if msg.key?('COMMAND')
-        @ws.send(msg['COMMAND']) unless check_last_message(rust_channel(@server), msg['COMMAND'])
-      elsif msg.key?('SERVER')
-        unless check_last_message(rust_channel, msg['SERVER'])
-          rust_channel(@server).send_message(rust_server_message(msg['SERVER']))
-        end
+      next unless msg.is_a?(Hash)
+
+      puts "RUST: #{msg}"
+
+      if msg.key?('COMMAND') && !check_last_message(rust_channel(@server), msg['COMMAND'])
+        @ws.send(msg['COMMAND'])
+      elsif msg.key?('SERVER') && !check_last_message(rust_channel, msg['SERVER'])
+        rust_channel(@server).send_message(rust_server_message(msg['SERVER']))
       end
     end
   end
