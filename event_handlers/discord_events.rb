@@ -38,9 +38,9 @@ module DiscordEvents
 
   command :assign_role do |event, *role|
     role = role.join(' ')
-    json = JSON.parse(File.read('blob.json'))
-    role = event.message.content[13..-1]
+    next 'Role name required' if role.empty?
 
+    json = JSON.parse(File.read('blob.json'))
     json['protected_roles'].each do |r|
       role = 'invalid' if r.include?(role)
     end
