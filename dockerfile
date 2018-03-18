@@ -7,6 +7,5 @@ WORKDIR /opt/
 COPY Gemfile Gemfile.lock ./
 RUN bundle install
 COPY . /opt/
-RUN chmod +x run.sh
 
-CMD ["/opt/run.sh"]
+ENTRYPOINT ["rake"]
