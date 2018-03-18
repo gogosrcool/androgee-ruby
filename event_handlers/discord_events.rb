@@ -37,7 +37,7 @@ module DiscordEvents
   end
 
   command :assign_role do |event, *role|
-    role = role.join(' ')
+    role = role.join(' ')&.downcase
     next 'Role name required' if role.empty?
 
     json = JSON.parse(File.read('blob.json'))
