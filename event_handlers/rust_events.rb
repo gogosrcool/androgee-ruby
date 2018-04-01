@@ -25,6 +25,10 @@ module RustEvents
 
   module_function
 
+  def to_discord(message)
+    rust_channel(@server).send_message(rust_server_message(message))
+  end
+
   def on_open
     @ws.on :open do
       puts 'Connected to Rust WebSocket.'
@@ -38,11 +42,8 @@ module RustEvents
 
       puts "RUST: #{msg}"
 
-      if msg.key?('COMMAND') && !check_last_message(rust_channel(@server), msg['COMMAND'])
-        @ws.send(msg['COMMAND'])
-      elsif msg.key?('SERVER') && !check_last_message(rust_channel, msg['SERVER'])
-        rust_channel(@server).send_message(rust_server_message(msg['SERVER']))
-      end
+      @ws.send(msg['COMMAND']) unless command_sent?(msg)
+      to_discord(msg['SERVER']) unless server_sent?(msg)
     end
   end
 

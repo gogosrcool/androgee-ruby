@@ -69,6 +69,18 @@ module RustHelpers
     "``#{msg}``"
   end
 
+  # @param message [Hash]
+  # @return [true, false]
+  def command_sent?(message)
+    message.key?('COMMAND') && check_last_message(rust_channel(@server), message['COMMAND'])
+  end
+
+  # @param message [Hash]
+  # @return [true, false]
+  def server_sent?(message)
+    message.key?('SERVER') && check_last_message(rust_channel(@server), message['SERVER'])
+  end
+
   # @param server [Discordrb::Server]
   # @return [Discordrb::Channel]
   def rust_channel(server)
