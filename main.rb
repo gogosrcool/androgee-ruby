@@ -38,12 +38,12 @@ class Androgee
       current_players = players.split(/\s*,\s*/).sort
       diff = current_players - @previous_players
 
-      if diff.empty? == false
+      unless diff.empty?
         normalized = diff.to_s.chop![1..-1].delete('"')
         annoucement_msg = "#{normalized} joined the server"
         puts annoucement_msg
         helpers.get_discord_channel('minecraft-server')
-               .send_message("``#{annoucement_msg}``")
+            .send_message("``#{annoucement_msg}``")
       end
       @previous_players = current_players
     end
