@@ -89,7 +89,7 @@ class DiscordEvents
     @discord.command :translate do |event|
       @helpers.delete_last_message(event.channel)
       test = event.message.content.slice(11..event.message.content.length)
-      RestClient.post 'http://api.funtranslations.com/translate/jive.json', text: test do |response, request, result|
+      RestClient.post 'http://api.funtranslations.com/translate/jive.json', text: test do |response, result|
         if result.code == '429'
           JSON.parse(result.body).dig('error', 'message')
         else
