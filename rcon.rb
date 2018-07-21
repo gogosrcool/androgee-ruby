@@ -17,9 +17,9 @@ class RCon
       match = /^.+?\s(?:is|=)\s"([^"]+)".*$/.match response
       match = match[1]
       if /\D/.match match
-        return match
+        match
       else
-        return match.to_i
+        match.to_i
       end
     end
   end
@@ -73,7 +73,7 @@ class RCon::Packet::Source
 
     @packet_size = build_packet.length
 
-    return self
+    self
   end
 
   #
@@ -89,7 +89,7 @@ class RCon::Packet::Source
 
     @packet_size = build_packet.length
 
-    return self
+    self
   end
 
   #
@@ -98,7 +98,7 @@ class RCon::Packet::Source
   # that srcds actually needs.
   #
   def build_packet
-    return [@request_id, @command_type, @string1, @string2].pack("VVa#{@string1.length}a2")
+    [@request_id, @command_type, @string1, @string2].pack("VVa#{@string1.length}a2")
   end
 
   # Returns a string representation of the packet, useful for
@@ -106,7 +106,7 @@ class RCon::Packet::Source
   def to_s
     packet = build_packet
     @packet_size = packet.length
-    return [@packet_size].pack("V") + packet
+    [@packet_size].pack("V") + packet
   end
 
 end
@@ -196,7 +196,7 @@ class RCon::Query::Original < RCon::Query
     @response.sub! %/^\xFF\xFF\xFF\xFF#{@server_type}/, ""
     @response.sub! /\x00+$/, ""
 
-    return @response
+    @response
   end
 
   #
@@ -236,7 +236,7 @@ class RCon::Query::Original < RCon::Query
       break if packet.length < 8192
     end
 
-    return retval
+    retval
   end
 
 end
@@ -294,7 +294,7 @@ class RCon::Query::Source < RCon::Query
     @return_packets = false
     response = super
     @return_packets = return_packets
-    return response
+    response
   end
 
   #
@@ -323,9 +323,9 @@ class RCon::Query::Source < RCon::Query
     end
 
     if @return_packets
-      return rpacket
+      rpacket
     else
-      return rpacket.string1
+      rpacket.string1
     end
   end
 
@@ -355,9 +355,9 @@ class RCon::Query::Source < RCon::Query
 
     @authed = true
     if @return_packets
-      return rpacket
+      rpacket
     else
-      return true
+      true
     end
   end
 
@@ -424,7 +424,7 @@ class RCon::Query::Source < RCon::Query
 
     # strip nulls (this is actually the end of string1 and string2)
     rpacket.string1 = response.sub /\x00\x00$/, ""
-    return rpacket
+    rpacket
   end
 
   # establishes a connection to the server.
@@ -476,7 +476,7 @@ class RCon::Query::Minecraft < RCon::Query
     @return_packets = false
     response = super
     @return_packets = return_packets
-    return response
+    response
   end
 
   #
@@ -505,9 +505,9 @@ class RCon::Query::Minecraft < RCon::Query
     end
 
     if @return_packets
-      return rpacket
+      rpacket
     else
-      return rpacket.string1
+      rpacket.string1
     end
   end
 
@@ -536,9 +536,9 @@ class RCon::Query::Minecraft < RCon::Query
 
     @authed = true
     if @return_packets
-      return rpacket
+      rpacket
     else
-      return true
+      true
     end
   end
 
@@ -594,7 +594,7 @@ class RCon::Query::Minecraft < RCon::Query
     message2.sub! /\x00\x00$/, ""
     rpacket.string1 = message
     rpacket.string2 = message2
-    return rpacket
+    rpacket
   end
 
   # establishes a connection to the server.
