@@ -32,13 +32,13 @@ class Androgee
     timers = Timers::Group.new
     timers.now_and_every(60) do
       rcon = connection_factory.rcon_connection
-      players = rcon.command('list').slice!(30..-1)
+      players = rcon.command('list').slice!(39..-1)
       rcon.disconnect
 
       current_players = players.split(/\s*,\s*/).sort
       diff = current_players - @previous_players
 
-      if diff.empty?
+      unless diff.empty?
         normalized = diff.to_s.chop![1..-1].delete('"')
         annoucement_msg = "#{normalized} joined the server"
         puts annoucement_msg
