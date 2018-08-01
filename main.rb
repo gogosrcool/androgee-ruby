@@ -37,7 +37,7 @@ class Androgee
 
       current_players = players.split(/\s*,\s*/).sort
       diff = current_players - @previous_players
-
+      diff.pop if diff.first == ' '
       unless diff.empty?
         normalized = diff.to_s.chop![1..-1].delete('"')
         annoucement_msg = "#{normalized} joined the server"
