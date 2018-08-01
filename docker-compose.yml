@@ -1,6 +1,7 @@
-version: "2.3"
+version: "2"
 services:
   androgee:
+    network_mode: "host"
     build:
       context: .
       args:
