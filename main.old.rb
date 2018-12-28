@@ -10,7 +10,7 @@ require('timers')
 # The object that does it all!
 class Androgee
   def initialize
-    initialized = false
+    initialized = false;
     @previous_players = []
     connection_factory = ConnectionFactory.new
     bot = connection_factory.discord_connection
