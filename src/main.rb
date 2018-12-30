@@ -1,7 +1,5 @@
 require './listen'
 
-unless ENV['TOKEN']
-  raise('Exiting - Double check your environment variables.')
-end
+raise('Exiting - Double check your environment variables.') unless ENV['TOKEN']
 
 Listen.new
