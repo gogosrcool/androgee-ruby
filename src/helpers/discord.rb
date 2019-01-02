@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+Thread.abort_on_exception = true
 require 'docker'
+require 'timers'
 
 # Assorted helper methods
 class DiscordHelpers
@@ -24,17 +26,17 @@ class DiscordHelpers
     channel.history(1).first.delete
   end
 
-  def game_announce(container, player_regex, channel)
+  def game_announce(container, player_regex, channel_name)
     unix_time = Time.now.to_i - 30
     logs = container.logs(stdout: true, since: unix_time)
-    debug = get_discord_channel(channel)
+    channel = get_discord_channel(channel_name)
     player = logs.match(player_regex)
     puts player
     if player
       announce = "**#{player}** joined the server"
-      debug.send_message announce unless check_last_message(debug, announce) == true
+      channel.send_message announce unless check_last_message(channel, announce) == true
     else
-      puts 'no'
+      puts 'nah'
       # debug.send_message 'ya didnt join'
     end
   end
