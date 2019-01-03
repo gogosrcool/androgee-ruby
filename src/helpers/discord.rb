@@ -29,15 +29,11 @@ class DiscordHelpers
   def game_announce(container, player_regex, channel_name)
     unix_time = Time.now.to_i - 30
     logs = container.logs(stdout: true, since: unix_time)
-    channel = get_discord_channel(channel_name)
     player = logs.match(player_regex)
-    puts player
-    if player
-      announce = "**#{player}** joined the server"
-      channel.send_message announce unless check_last_message(channel, announce) == true
-    else
-      puts 'nah'
-      # debug.send_message 'ya didnt join'
-    end
+    return unless player
+
+    msg = "**#{player}** joined the server"
+    channel = get_discord_channel(channel_name)
+    channel.send_message(msg) unless check_last_message(channel, msg)
   end
 end
