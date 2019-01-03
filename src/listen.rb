@@ -1,6 +1,5 @@
 require 'docker'
 require 'discordrb'
-require './connect'
 require './listeners/minecraft'
 require './commands/get_container'
 
@@ -12,9 +11,8 @@ class Listen
           .new(token: ENV['TOKEN'], prefix: ENV['PREFIX'])
     bot.ready do
       minecraft_listener = MinecraftListener.new(bot)
-      
       timers.now_and_every(30) do
-        minecraft_listener.Listen
+        minecraft_listener.listen
       end
       Thread.new { loop { timers.wait } }
       puts 'I\'m in'
