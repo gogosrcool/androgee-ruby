@@ -1,9 +1,8 @@
-require 'json'
 require 'docker'
 
-# Comment
-class GetContainer
-  def get_em(name)
+# Things
+module Container
+  def self.get_container(name)
     Docker.url = 'tcp://192.168.1.130:2376'
     my_container = ''
     containers = Docker::Container.all
