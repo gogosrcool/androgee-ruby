@@ -1,27 +1,25 @@
+Thread.abort_on_exception = true
+require 'timers'
 require 'docker'
 require 'discordrb'
 require './listeners/minecraft'
 
 # I'm listening
-class Listen
-  def initialize
+module Listen
+  def self.start
     @timers = Timers::Group.new
     @bot = Discordrb::Commands::CommandBot.new(token: ENV['TOKEN'], prefix: ENV['PREFIX'])
-    discord
-  end
-
-  def discord
     @bot.ready do
-      puts 'I\'m listening'
+      puts 'hell ya'
       game_loop
     end
     @bot.run
   end
 
-  def game_loop
-    minecraft_listener = MinecraftListener.new(@bot)
+  def self.game_loop
+    puts 'away we go'
     @timers.now_and_every(30) do
-      minecraft_listener.listen
+      MinecraftListener.listen(@bot)
     end
     Thread.new { loop { @timers.wait } }
   end
