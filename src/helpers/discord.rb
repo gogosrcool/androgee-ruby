@@ -1,39 +1,49 @@
 # frozen_string_literal: true
 
-Thread.abort_on_exception = true
-require 'docker'
-require 'timers'
-
 # Assorted helper methods
-class DiscordHelpers
-  def initialize(discord)
-    @discord = discord
+module DiscordHelpers
+  # @param server [Discordrb::Server]
+  # @param message [String]
+  def self.debug_notification(server, message)
+    puts message
+    debug_channel(server).send_message(message)
   end
 
-  def get_discord_channel(channel_name)
-    @discord.servers
-            .dig(ENV['SERVER_ID'].to_i)
-            .text_channels.select do |channel|
-      channel.name == channel_name
-    end.first
+  # @param server [Discordrb::Server]
+  # @param channel_name [String]
+  # @return [Discordrb::Channel]
+  def self.discord_channel(server, channel_name)
+    server.channels.select { |x| x.name == channel_name }.first
   end
 
-  def check_last_message(channel, msg)
+  # Checks latest message for a given Discord channel
+  # and returns true or false if messages match
+  #
+  # @param channel [Discordrb::Channel]
+  # @param msg [String]
+  # @return [true, false]
+  def self.check_last_message(channel, msg)
     channel.history(1).first.content.include?(msg)
   end
 
-  def delete_last_message(channel)
+  # @param channel [Discordrb::Channel]
+  def self.delete_last_message(channel)
     channel.history(1).first.delete
   end
 
-  def game_announce(container, player_regex, channel_name)
+  # @param server [Discordrb::Server]
+  # @return [Discordrb::Channel]
+  def self.debug_channel(server)
+    @debug_channel ||= discord_channel(server, 'debug')
+  end
+
+  def self.game_announce(container, player_regex, channel)
     unix_time = Time.now.to_i - 30
     logs = container.logs(stdout: true, since: unix_time)
     player = logs.match(player_regex)
     return unless player
 
     msg = "**#{player}** joined the server"
-    channel = get_discord_channel(channel_name)
     channel.send_message(msg) unless check_last_message(channel, msg)
   end
 end
