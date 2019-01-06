@@ -3,7 +3,7 @@ require 'docker'
 # Things
 module Container
   def self.get_container(name)
-    Docker.url = 'tcp://192.168.1.130:2376'
+    Docker.url = "tcp://#{ENV['DOCKER_HOST']}:#{ENV['DOCKER_PORT']}"
     my_container = ''
     containers = Docker::Container.all
     containers.each do |container|
