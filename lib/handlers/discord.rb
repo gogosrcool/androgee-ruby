@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
-require './helpers/discord.rb'
+require './lib/helpers/discord.rb'
 
 # The module that contains and handles all events associated with Discord
 module DiscordEvents
