@@ -3,12 +3,14 @@ require 'timers'
 require 'docker'
 require 'discordrb'
 require './listeners/minecraft'
+require './handlers/discord'
 
 # I'm listening
 module Listen
   def self.start
     @timers = Timers::Group.new
     @bot = Discordrb::Commands::CommandBot.new(token: ENV['TOKEN'], prefix: ENV['PREFIX'])
+    @bot.include! DiscordEvents
     @bot.ready do
       puts 'hell ya'
       game_loop
