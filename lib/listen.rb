@@ -1,4 +1,5 @@
 Thread.abort_on_exception = true
+require 'yaml'
 require 'timers'
 require 'docker'
 require 'discordrb'
@@ -11,7 +12,8 @@ module Listen
     @timers = Timers::Group.new
     @bot = Discordrb::Commands::CommandBot.new(token: ENV['TOKEN'], prefix: ENV['PREFIX'])
     @bot.include! DiscordEvents
-    @bot.ready do
+    @bot.ready do |event|
+    event.bot.game = YAML.load_file('./config.yml')['games'].sample
       puts 'hell ya'
       game_loop
     end
