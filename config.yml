@@ -7,4 +7,5 @@ protected_roles:
   - 'Demigods (Server-Admins)'
   - 'Heroes'
   - 'Bot Commander'
+  - 'Rowdy'
 
