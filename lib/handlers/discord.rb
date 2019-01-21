@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'json'
+require 'yaml'
 require './lib/helpers/discord.rb'
 
 # The module that contains and handles all events associated with Discord
@@ -40,22 +40,25 @@ module DiscordEvents
     role = role.join(' ')&.downcase
     next 'Role name required' if role.empty?
 
-    json = JSON.parse(File.read('blob.json'))
-    json['protected_roles'].each do |r|
-      role = 'invalid' if r.include?(role)
+    config = YAML.load_file('./config.yml')
+    config['protected_roles'].each do |r|
+      role = 'invalid' if r.downcase.include?(role)
     end
     event.server.roles.each do |r|
-      if r.name.include?(role)
+      next unless r.name.downcase.include?(role)
+      begin
         event.author.add_role(r)
         role = 'valid'
+      rescue
+        role = 'invalid'
       end
     end
     if role == 'invalid'
       'Invalid role. Try something else.'
     elsif role == 'valid'
-      'Done'
+      'Done!'
     else
-      'Nope.'
+      'No.'
     end
   end
 
@@ -77,7 +80,7 @@ module DiscordEvents
   # end
 
   command :translate do |event|
-    delete_last_message(event.channel)
+    DiscordHelpers.delete_last_message(event.channel)
     test = event.message.content.slice(11..event.message.content.length)
     RestClient.post 'http://api.funtranslations.com/translate/jive.json', text: test do |response, _request, result|
       if result.code == '429'
