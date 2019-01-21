@@ -13,15 +13,14 @@ module Listen
     @bot = Discordrb::Commands::CommandBot.new(token: ENV['TOKEN'], prefix: ENV['PREFIX'])
     @bot.include! DiscordEvents
     @bot.ready do |event|
-    event.bot.game = YAML.load_file('./config.yml')['games'].sample
-      puts 'hell ya'
+      event.bot.game = YAML.load_file('./config.yml')['games'].sample
       game_loop
     end
     @bot.run
   end
 
   def self.game_loop
-    puts 'away we go'
+    puts 'and away we go'
     @timers.now_and_every(30) do
       MinecraftListener.listen(@bot)
     end
