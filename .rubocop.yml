@@ -1,2 +1,6 @@
+AllCops:
+  TargetRubyVersion: 2.5
+Layouts:
+  EmptyLineAfterGuardClause: false
 Metrics/LineLength:
   Max: 100
