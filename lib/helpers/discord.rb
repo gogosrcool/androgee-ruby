@@ -40,9 +40,14 @@ module DiscordHelpers
   def self.game_announce(container, player_regex, channel)
     unix_time = Time.now.to_i - 30
     logs = container.logs(stdout: true, since: unix_time)
-    player_name = logs.match(player_regex)
-    return unless player_name
+    match = logs.match(player_regex)
+    return unless match
 
+    player_name = if match.to_s[0] == '/' # This is a hack for Rust because I hate and suck at Regex
+                    match.to_s[1..-1]
+                  else
+                    match.to_s
+                  end
     msg = "**#{player_name}** joined the server"
     channel.send_message(msg) unless check_last_message(channel, msg)
   end
