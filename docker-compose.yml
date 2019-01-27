@@ -2,17 +2,7 @@ version: "2"
 services:
   androgee:
     network_mode: "host"
+    env_file:
+      - vars.env
     build:
       context: .
-      args:
-        egeeio_server:      $EGEEIO_SERVER
-        rust_ip:            $RUST_IP
-        rust_port:          $RUST_PORT
-        rust_password:      $RUST_PASSWORD
-        minecraft_ip:       $MINECRAFT_IP
-        minecraft_port:     $MINECRAFT_PORT
-        minecraft_password: $MINECRAFT_PASSWORD
-# networks:
-#   default:
-#     external:
-#       name: egeeio_network
