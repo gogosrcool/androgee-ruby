@@ -3,6 +3,7 @@ require 'yaml'
 require 'timers'
 require 'docker'
 require 'discordrb'
+require './lib/listeners/rust'
 require './lib/listeners/minecraft'
 require './lib/handlers/discord'
 
@@ -22,6 +23,7 @@ module Listen
   def self.game_loop
     puts 'and away we go'
     @timers.now_and_every(30) do
+      RustListener.listen(@bot)
       MinecraftListener.listen(@bot)
     end
     Thread.new { loop { @timers.wait } }
