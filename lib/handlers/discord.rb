@@ -10,16 +10,16 @@ module DiscordEvents
   extend DiscordHelpers
 
   # Server event handler
-  # member_join do |event|
-  #   event.server
-  #     .default_channel
-  #     .send_message("#{event.user.display_name} has joined! :wave:")
-  # end
+  member_join do |event|
+    event.server
+    debug_channel(event.server)
+      .send_message("#{event.user.username} just left the server.")
+  end
 
-  # member_leave do |event|
-  #   debug_channel(event.server)
-  #     .send_message("#{event.user.username} just left the server.")
-  # end
+  member_leave do |event|
+    debug_channel(event.server)
+      .send_message("#{event.user.username} just left the server.")
+  end
 
   # General message event handler
   command :help do
