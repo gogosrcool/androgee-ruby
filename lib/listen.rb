@@ -3,8 +3,7 @@ require 'yaml'
 require 'timers'
 require 'docker'
 require 'discordrb'
-require './lib/listeners/rust'
-require './lib/listeners/minecraft'
+require './lib/listeners/generic'
 require './lib/handlers/discord'
 
 # I'm listening
@@ -23,8 +22,8 @@ module Listen
   def self.game_loop
     puts 'and away we go'
     @timers.now_and_every(30) do
-      RustListener.listen(@bot)
-      MinecraftListener.listen(@bot)
+      GenericListener.listen(@bot, 'rust', %r{\/\w+(?=.joined)})
+      GenericListener.listen(@bot, 'minecraft', /(?<=\bUUID\sof\splayer\s)(\w+)/)
     end
     Thread.new { loop { @timers.wait } }
   end
