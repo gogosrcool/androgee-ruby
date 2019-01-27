@@ -11,7 +11,6 @@ module DiscordEvents
 
   # Server event handler
   member_join do |event|
-    event.server
     debug_channel(event.server)
       .send_message("#{event.user.username} just left the server.")
   end
@@ -24,7 +23,7 @@ module DiscordEvents
   # General message event handler
   command :help do
     <<~TEXT
-      Mrj programmed me with the following commands:
+      m00ch programmed me with the following commands:
       ~assign_role
       ~fortune
       ~chucknorris
@@ -46,6 +45,7 @@ module DiscordEvents
     end
     event.server.roles.each do |r|
       next unless r.name.downcase.include?(role)
+
       begin
         event.author.add_role(r)
         role = 'valid'
@@ -63,21 +63,21 @@ module DiscordEvents
   end
 
   # Fun message event handler
-  # command :fortune do
-  #   "```\n#{`fortune -s | cowsay`}\n```"
-  # end
+  command :fortune do
+    "```\n#{`fortune -s | cowsay`}\n```"
+  end
 
   command :chucknorris do
     JSON.parse(RestClient.get('http://api.icndb.com/jokes/random?exclude=[explicit]')).dig('value', 'joke')
   end
 
-  # command :ghostbusters do
-  #   "```\n#{`cowsay -f ghostbusters Who you Gonna Call`}\n```"
-  # end
+  command :ghostbusters do
+    "```\n#{`cowsay -f ghostbusters Who you Gonna Call`}\n```"
+  end
 
-  # command :moo do
-  #   "```\n#{`apt-get moo`}\n```"
-  # end
+  command :moo do
+    "```\n#{`apt-get moo`}\n```"
+  end
 
   command :translate do |event|
     DiscordHelpers.delete_last_message(event.channel)
