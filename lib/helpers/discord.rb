@@ -40,10 +40,10 @@ module DiscordHelpers
   def self.game_announce(container, player_regex, channel)
     unix_time = Time.now.to_i - 30
     logs = container.logs(stdout: true, since: unix_time)
-    player = logs.match(player_regex)
-    return unless player
+    player_name = logs.match(player_regex)
+    return unless player_name
 
-    msg = "**#{player}** joined the server"
+    msg = "**#{player_name}** joined the server"
     channel.send_message(msg) unless check_last_message(channel, msg)
   end
 end
