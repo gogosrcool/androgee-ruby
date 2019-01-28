@@ -23,7 +23,7 @@ module DiscordEvents
   # General message event handler
   command :help do
     <<~TEXT
-      m00ch programmed me with the following commands:
+      the titans programmed me with the following commands:
       ~assign_role
       ~fortune
       ~chucknorris
